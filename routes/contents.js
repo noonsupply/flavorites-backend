@@ -29,7 +29,7 @@ router.post("/", (req, res) => {
 });
 
 router.delete("/delete", (req, res) => {
-  Contents.deleteOne({ contentname: req.body.title }).then((data) => {
+  Contents.deleteOne({ title: req.body.title }).then((data) => {
     if (data) {
       res.json({ result: true, contentDeleted: data });
     } else {
