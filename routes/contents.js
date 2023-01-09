@@ -3,28 +3,24 @@ var router = express.Router();
 const { checkBody } = require("../modules/checkBody");
 
 const Contents = require("../models/contents");
+const User = require("../models/users");
 
 router.post("/", (req, res) => {
-  if (!checkBody(req.body, ["title", "url"])) {
-    res.json({ result: false, error: "Missing or empty fields" });
-    return;
-  }
-
-  Contents.findOne({ title: req.body.title }).then((data) => {
-    if (data === null) {
+  User.findOne({ token: req.body.token }).then((user) => {
       const newContent = new Contents({
+        user: user._id,
         title: req.body.title,
         url: req.body.url,
         logo: req.body.logo,
         description: req.body.description,
       });
 
-      newContent.save().then((newDoc) => {
+      newContent
+      .save()
+      .then((newDoc) => {
         res.json({ result: true, title: newDoc.title });
       });
-    } else {
-      res.json({ result: false, error: "Content already exists" });
-    }
+
   });
 });
 

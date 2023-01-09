@@ -22,6 +22,7 @@ router.post("/signup", (req, res) => {
         password: hash,
         token: uid2(32),
         profilImg: req.body.profilImg,
+        contents : []
       });
 
       newUser.save().then((newDoc) => {
@@ -67,5 +68,109 @@ router.post("/userData", (req, res) => {
     res.json({ result: true, user: data });
   });
 });
+
+/* router.post("/", (req, res) => {
+  User.updateOne({ token: req.body.token },
+  {
+    $push: {
+      contents: req.body.contents,
+    },
+  })
+  
+  .then((user) => {
+      const newContent = new contents({
+        user: user._id,
+        title: req.body.title,
+        url: req.body.url,
+        logo: req.body.logo,
+        description: req.body.description,
+      });
+
+      contents
+      .save()
+      .then((newDoc) => {
+        res.json({ result: true, title: newDoc.title });
+        res.send({ _id: req.query.contentsID });
+      });
+  });
+}); */
+
+router.post("/", (req, res) => {
+  User.updateOne({ token: req.body.token },
+  {
+    $push: {
+      contents: req.body.contents,
+    },
+  })
+  .then((user) => {
+      const newContent = new Contents({
+        user: user._id,
+        title: req.body.title,
+        url: req.body.url,
+        logo: req.body.logo,
+        description: req.body.description,
+      });
+
+      contents
+      .save()
+      .then((newDoc) => {
+        res.json({ result: true, title: newDoc.title });
+        res.send({ _id: req.query.contentsID });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.json({ result: false, error: error.message });
+      });
+  })
+  .catch((error) => {
+    console.error(error);
+    res.json({ result: false, error: error.message });
+  });
+});
+
+
+router.delete("/deleteContent", (req, res) => {
+
+User.updateOne(
+  { username: req.body.username }, // filter to find the right document
+  { $pull: { contents: { title: req.body.title } } }, // update using the $pull operator to remove the subdocument
+  function(error, result) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(result);
+    }
+  }
+);
+})
+
+router.post("/all", function (req, res, next) {
+  User.find({username : req.body.username}).then((data) => res.json({ result: true, users: data }));
+})
+
+/* router.post("/updateContents", function (req, res, next) {
+    
+    User.findOneAndUpdate(
+      { username: req.body.username }, // filter to find the right document
+      { $push: { contents: { title: req.body.title, url: req.body.url, description: req.body.description } } }, // update using the $pull operator to remove the subdocument
+      function(error, result) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(result);
+        }
+      }
+    );
+  }); */
+
+  router.post("/updateContents", function (req, res, next) {
+    //console.log("tentative récupération contentesID",req.body.contentsID)
+    User.updateOne(
+      { "contents._id": req.body.contentsID },
+      { $set: { "contents.$.title": req.body.title, "contents.$.url": req.body.url, "contents.$.description": req.body.description } }
+    )
+      .then(result => console.log(result))
+      .catch(error => console.log(error));
+  })
 
 module.exports = router;
