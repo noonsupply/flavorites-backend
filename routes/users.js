@@ -173,10 +173,4 @@ router.post("/all", function (req, res, next) {
       .catch(error => console.log(error));
   })
 
-  router.get("/all", (req, res) => {
-    Contents.find({})
-      
-      .then((data) => res.json({ allContents: data }));
-  });
-
 module.exports = router;
