@@ -69,7 +69,7 @@ router.post("/userData", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/add", (req, res) => {
   User.updateOne({ token: req.body.token },
   {
     $push: {
@@ -105,11 +105,14 @@ User.updateOne(
   { $pull: { contents: { title: req.body.title } } }, // update using the $pull operator to remove the subdocument
   function(error, result) {
     if (error) {
-      console.log(error);
-    } else {
-      console.log(result);
+        return res.status(500).send(error);
     }
-  }
+    if(result.nModified === 1) {
+      return res.status(200).send({ message: "Content deleted successfully" });
+    } else {
+      return res.status(401).send({ message: "Error while deleting content" });
+    }
+}
 );
 })
 
