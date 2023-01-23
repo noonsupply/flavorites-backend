@@ -69,53 +69,21 @@ router.post("/userData", (req, res) => {
   });
 });
 
-/* router.post("/", (req, res) => {
-  User.updateOne({ token: req.body.token },
-  {
-    $push: {
-      contents: req.body.contents,
-    },
-  })
-  
-  .then((user) => {
-      const newContent = new contents({
-        user: user._id,
-        title: req.body.title,
-        url: req.body.url,
-        logo: req.body.logo,
-        description: req.body.description,
-      });
-
-      contents
-      .save()
-      .then((newDoc) => {
-        res.json({ result: true, title: newDoc.title });
-        res.send({ _id: req.query.contentsID });
-      });
-  });
-}); */
-
 router.post("/", (req, res) => {
   User.updateOne({ token: req.body.token },
   {
     $push: {
-      contents: req.body.contents,
+      contents: 
+        req.body.contents
     },
   })
   .then((user) => {
-      const newContent = new Contents({
-        user: user._id,
-        title: req.body.title,
-        url: req.body.url,
-        logo: req.body.logo,
-        description: req.body.description,
-      });
-
-      contents
-      .save()
-      .then((newDoc) => {
-        res.json({ result: true, title: newDoc.title });
-        res.send({ _id: req.query.contentsID });
+    if (!user) {
+      return res.status(404).json({ result: false, error: 'User not found' });
+    }
+    user.save()
+      .then((savedUser) => {
+        res.json({ result: true, title: savedUser.contents[savedUser.contents.length - 1].title });
       })
       .catch((error) => {
         console.error(error);
@@ -127,6 +95,7 @@ router.post("/", (req, res) => {
     res.json({ result: false, error: error.message });
   });
 });
+
 
 
 router.delete("/deleteContent", (req, res) => {
@@ -144,6 +113,7 @@ User.updateOne(
 );
 })
 
+//récupère toutes les data d'un user
 router.post("/all", function (req, res, next) {
   User.find({username : req.body.username}).then((data) => res.json({ result: true, users: data }));
 })
