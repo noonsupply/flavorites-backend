@@ -8,7 +8,7 @@ const contentsSchema = mongoose.Schema({
 })
 
 const userSchema = mongoose.Schema({
-    name:String,
+    email:String,
     username: String,
     password: String,
     token: String,
