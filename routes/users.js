@@ -35,12 +35,13 @@ router.post("/signup", (req, res) => {
 });
 
 router.post("/signin", (req, res) => {
-  if (!checkBody(req.body, ["username", "password"])) {
+  console.log("je rentre dans signin")
+  if (!checkBody(req.body, ["email", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
   }
 
-  User.findOne({ username: req.body.username }).then((data) => {
+  User.findOne({ email: req.body.email }).then((data) => {
     if (data && bcrypt.compareSync(req.body.password, data.password)) {
       res.json({
         result: true,
