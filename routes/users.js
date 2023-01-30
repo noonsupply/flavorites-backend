@@ -35,7 +35,6 @@ router.post("/signup", (req, res) => {
 });
 
 router.post("/signin", (req, res) => {
-  console.log("je rentre dans signin")
   if (!checkBody(req.body, ["email", "password"])) {
     res.json({ result: false, error: "Missing or empty fields" });
     return;
