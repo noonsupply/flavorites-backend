@@ -147,13 +147,16 @@ router.post("/all", function (req, res, next) {
 
 router.get('/myTags', async (req, res) => {
   try {
-    const currentUser = req.user; // récupère l'utilisateur connecté à partir du token
-    const allTags = currentUser.contents.flatMap(content => content.tags); // récupère tous les tags des contenus de l'utilisateur
-    const uniqueTags = [...new Set(allTags)]; // transforme la liste de tags en un ensemble pour s'assurer que chaque tag est unique
-    res.json(uniqueTags); // renvoie les tags en tant que réponse JSON
+    const { username } = req.body;
+const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur introuvable.' });
+    }
+    const tags = user.contents.reduce((acc, content) => [...acc, ...content.tags], []);
+    res.json({ tags });
   } catch (err) {
     console.error(err);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ message: 'Erreur serveur.' });
   }
 });
 
