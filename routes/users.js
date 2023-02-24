@@ -133,7 +133,7 @@ router.post("/all", function (req, res, next) {
       .catch(error => console.log(error));
   })
 
-/*   router.get('/addTags', async (req, res) => {
+router.get('/addTags', async (req, res) => {
     try {
         const users = await User.find();
         const allTags = users.flatMap(user => user.contents.flatMap(content => content.tags));
@@ -143,9 +143,9 @@ router.post("/all", function (req, res, next) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
-}); */
+});
 
-router.get('/myTags', async (req, res) => {
+/* router.get('/myTags', async (req, res) => {
   try {
     const { username } = req.body;
 const user = await User.findOne({ username });
@@ -158,7 +158,7 @@ const user = await User.findOne({ username });
     console.error(err);
     res.status(500).json({ message: 'Erreur serveur.' });
   }
-});
+}); */
 
 
 //route pour supprimer un tag
