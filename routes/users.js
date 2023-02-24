@@ -133,7 +133,7 @@ router.post("/all", function (req, res, next) {
       .catch(error => console.log(error));
   })
 
-  router.get('/addTags', async (req, res) => {
+/*   router.get('/addTags', async (req, res) => {
     try {
         const users = await User.find();
         const allTags = users.flatMap(user => user.contents.flatMap(content => content.tags));
@@ -143,7 +143,20 @@ router.post("/all", function (req, res, next) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
+}); */
+
+router.get('/myTags', async (req, res) => {
+  try {
+    const currentUser = req.user; // récupère l'utilisateur connecté à partir du token
+    const allTags = currentUser.contents.flatMap(content => content.tags); // récupère tous les tags des contenus de l'utilisateur
+    const uniqueTags = [...new Set(allTags)]; // transforme la liste de tags en un ensemble pour s'assurer que chaque tag est unique
+    res.json(uniqueTags); // renvoie les tags en tant que réponse JSON
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 //route pour supprimer un tag
 router.delete('/deleteTag', async (req, res) => {
