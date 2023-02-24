@@ -133,7 +133,7 @@ router.post("/all", function (req, res, next) {
       .catch(error => console.log(error));
   })
 
-  router.get('/addTags', async (req, res) => {
+  router.post('/addTags', async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username }); // trouver l'utilisateur Nooman
         if (!user) {
