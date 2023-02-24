@@ -123,29 +123,53 @@ router.post("/all", function (req, res, next) {
   User.find({username : req.body.username}).then((data) => res.json({ result: true, users: data }));
 })
 
-/* router.post("/updateContents", function (req, res, next) {
-    
-    User.findOneAndUpdate(
-      { username: req.body.username }, // filter to find the right document
-      { $push: { contents: { title: req.body.title, url: req.body.url, description: req.body.description } } }, // update using the $pull operator to remove the subdocument
-      function(error, result) {
-        if (error) {
-          console.log(error);
-        } else {
-          console.log(result);
-        }
-      }
-    );
-  }); */
-
   router.post("/updateContents", function (req, res, next) {
     //console.log("tentative récupération contentesID",req.body.contentsID)
     User.updateOne(
       { "contents._id": req.body.contentsID },
-      { $set: { "contents.$.title": req.body.title, "contents.$.url": req.body.url, "contents.$.description": req.body.description } }
+      { $set: { "contents.$.title": req.body.title, "contents.$.url": req.body.url, "contents.$.tags": req.body.tags } }
     )
       .then(result => console.log(result))
       .catch(error => console.log(error));
   })
+
+  router.get('/addTags', async (req, res) => {
+    try {
+        const users = await User.find();
+        const allTags = users.flatMap(user => user.contents.flatMap(content => content.tags));
+        const uniqueTags = [...new Set(allTags)];
+        res.json(uniqueTags);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+//route pour supprimer un tag
+router.delete('/deleteTag', async (req, res) => {
+  const { username, contentsID, tag } = req.body;
+
+  try {
+    // Find the user with the given username and content with the given ID
+    const user = await User.findOne({ username });
+    const content = user.contents.id(contentsID);
+
+    if (!content) {
+      return res.status(404).json({ error: 'Content not found' });
+    }
+
+    // Remove the specified tag from the content's tags array
+    content.tags = content.tags.filter(t => t !== tag);
+
+    // Update the user's contents in the database
+    await user.save();
+
+    res.json({ message: 'Tag removed successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 module.exports = router;

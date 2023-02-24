@@ -5,7 +5,9 @@ const contentsSchema = mongoose.Schema({
     url: String,
     logo: String,
     description: String,
+    tags : []
 })
+
 
 const userSchema = mongoose.Schema({
     email:String,
@@ -13,7 +15,7 @@ const userSchema = mongoose.Schema({
     password: String,
     token: String,
     profilImg:String,
-    contents : [contentsSchema]
+    contents : [contentsSchema],
 });
 
 const User = mongoose.model('users', userSchema);
