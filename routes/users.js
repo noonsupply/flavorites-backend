@@ -133,17 +133,21 @@ router.post("/all", function (req, res, next) {
       .catch(error => console.log(error));
   })
 
-router.get('/addTags', async (req, res) => {
+  router.get('/addTags', async (req, res) => {
     try {
-        const users = await User.find();
-        const allTags = users.flatMap(user => user.contents.flatMap(content => content.tags));
-        const uniqueTags = [...new Set(allTags)];
+        const user = await User.findOne({ username: req.body.username }); // trouver l'utilisateur Nooman
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur introuvable.' });
+        }
+        const tags = user.contents.flatMap(content => content.tags); // prendre uniquement les tags de l'utilisateur Nooman
+        const uniqueTags = [...new Set(tags)];
         res.json(uniqueTags);
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 /* router.get('/myTags', async (req, res) => {
   try {
