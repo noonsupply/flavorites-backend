@@ -191,5 +191,30 @@ router.delete('/deleteTag', async (req, res) => {
   }
 });
 
+/* //route pour supprimer un tag
+router.delete('/deleteTag', async (req, res) => {
+  const { username, contentsID, tag } = req.body;
+
+  try {
+    // Find the user with the given username and content with the given ID
+    const user = await User.findOne({ username });
+    const content = user.contents.id(contentsID);
+
+    if (!content) {
+      return res.status(404).json({ error: 'Content not found' });
+    }
+
+    // Remove the specified tag from the content's tags array
+    content.tags = content.tags.filter(t => t !== tag);
+
+    // Update the user's contents in the database
+    await user.save();
+
+    res.json({ message: 'Tag removed successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+}); */
 
 module.exports = router;
